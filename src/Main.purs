@@ -44,7 +44,8 @@ import Models.Group
 import Models.Input
 import Models.User
 import Models.Message
---import Models.State
+import Models.State
+import Views.Message
 
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
 appendToBody e = document globalWindow >>= (body >=> flip appendChild e)
@@ -53,15 +54,6 @@ newtype Task = Task { description :: String, completed :: Boolean }
 
 -- | The state of the application
 data State = State [Task]
-
--- | Inputs to the state machine
-data Input
-    = NewTask (Maybe String)
-    | UpdateDescription Number String
-    | MarkCompleted Number Boolean
-    | RemoveTask Number
-    | Undo
-    | Redo
 
 user1 :: User
 user1 =
@@ -110,10 +102,11 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
             State ts ->
                 H.div
                     [ A.class_ B.container ]
-                    ([ H.h1 [ A.id_ "header" ] [ H.text "todo list" ]
+                    [ H.h1 [ A.id_ "header" ] [ H.text "todo list" ]
                     , toolbar st
                     , H.div_ (zipWith task ts (0 .. length ts))
-                    ] ++ messagesView messages)
+                    , messagesView messages (Channel { name: "Hi" })
+                    ]
 
     toolbar :: forall p st. Undo.UndoRedoState st -> H.HTML p (m Input)
     toolbar st =
@@ -164,10 +157,6 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
                     , A.onClick (A.input_ $ RemoveTask index)
                     ]
                     [ H.text "x" ])))
-
-    messagesView :: forall p. [Message] -> [H.HTML p (m Input)]
-    messagesView =
-        map (\message -> H.div [] [ H.text message.from.name ])
 
     update :: State -> Input -> State
     update (State ts) (NewTask s) = State (ts ++ [Task { description: fromMaybe "" s, completed: false }])
