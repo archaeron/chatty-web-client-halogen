@@ -4,7 +4,7 @@ import Data.Void
 import Data.Tuple
 import Data.Maybe
 import Data.Either
-import Data.Array (zipWith, length, modifyAt, deleteAt, (..), (!!))
+import Data.Array (zipWith, length, modifyAt, deleteAt, (..), (!!), map)
 
 import qualified Data.String as S
 
@@ -63,17 +63,19 @@ data Input
     | Undo
     | Redo
 
+user1 :: User
 user1 =
     { name: "Harry"
     , email: "harry@hogwarts.com"
     }
 
+user2 :: User
 user2 =
     { name: "Ben"
     , email: "ben@kenobi.ch"
     }
 
-
+messages :: [Message]
 messages =
     [
         { from: user1
@@ -106,29 +108,35 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
     render st =
         case Undo.getState st of
             State ts ->
-                H.div [ A.class_ B.container ]
-                            [ H.h1 [ A.id_ "header" ] [ H.text "todo list" ]
-                            , toolbar st
-                            , H.div_ (zipWith task ts (0 .. length ts))
-                            ]
+                H.div
+                    [ A.class_ B.container ]
+                    ([ H.h1 [ A.id_ "header" ] [ H.text "todo list" ]
+                    , toolbar st
+                    , H.div_ (zipWith task ts (0 .. length ts))
+                    ] ++ messagesView messages)
 
     toolbar :: forall p st. Undo.UndoRedoState st -> H.HTML p (m Input)
-    toolbar st = H.p [ A.class_ B.btnGroup ]
-                                     [ H.button [ A.classes [ B.btn, B.btnPrimary ]
-                                                            , A.onClick (A.input_ $ NewTask Nothing)
-                                                            ]
-                                                            [ H.text "New Task" ]
-                                     , H.button [ A.class_ B.btn
-                                                            , A.enabled (Undo.canUndo st)
-                                                            , A.onClick (A.input_ Undo)
-                                                            ]
-                                                            [ H.text "Undo" ]
-                                     , H.button [ A.class_ B.btn
-                                                            , A.enabled (Undo.canRedo st)
-                                                            , A.onClick (A.input_ Redo)
-                                                            ]
-                                                            [ H.text "Redo" ]
-                                     ]
+    toolbar st =
+        H.p
+            [ A.class_ B.btnGroup ]
+            [ H.button
+                [ A.classes [ B.btn, B.btnPrimary ]
+                , A.onClick (A.input_ $ NewTask Nothing)
+                ]
+                [ H.text "New Task" ]
+            , H.button
+                [ A.class_ B.btn
+                , A.enabled (Undo.canUndo st)
+                , A.onClick (A.input_ Undo)
+                ]
+                [ H.text "Undo" ]
+            , H.button
+                [ A.class_ B.btn
+                , A.enabled (Undo.canRedo st)
+                , A.onClick (A.input_ Redo)
+                ]
+                [ H.text "Redo" ]
+            ]
 
     task :: forall p. Task -> Number -> H.HTML p (m Input)
     task (Task task) index = H.p_ <<< pure $
@@ -156,6 +164,10 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
                     , A.onClick (A.input_ $ RemoveTask index)
                     ]
                     [ H.text "x" ])))
+
+    messagesView :: forall p. [Message] -> [H.HTML p (m Input)]
+    messagesView =
+        map (\message -> H.div [] [ H.text message.from.name ])
 
     update :: State -> Input -> State
     update (State ts) (NewTask s) = State (ts ++ [Task { description: fromMaybe "" s, completed: false }])

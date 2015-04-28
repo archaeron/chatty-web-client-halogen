@@ -13,6 +13,7 @@
   "dependencies": {
       "purescript-ace": "~0.3.0",
       "purescript-halogen": "master",
-      "purescript-halogen-bootstrap": "master"
+      "purescript-halogen-bootstrap": "master",
+      "purescript-arrays": "~0.3.7"
   }
 }
