@@ -10,6 +10,8 @@ import qualified Halogen.HTML.Events as A
 import qualified Halogen.HTML.Events.Forms as A
 import qualified Halogen.HTML.Events.Handler as E
 
+import qualified Halogen.Themes.Bootstrap3 as B
+
 import Models.Channel
 import Models.Message
 import Models.State
@@ -27,16 +29,26 @@ messageTypeView message =
 
 messageView :: forall p m. (Alternative m) => Message -> H.HTML p (m Input)
 messageView { from: from, to: to, message: message } =
-	H.li
-		[ A.class_ $ A.className "message" ]
-		[ H.span [ A.class_ $ A.className "from" ] [ H.text from.name ]
-		, H.span [ A.class_ $ A.className "message-content" ] [ messageTypeView message ]
+	H.div
+		[ A.classes [ A.className "message", B.media ] ]
+		[ H.div
+			[ A.class_ B.mediaLeft ]
+			[ H.img [ A.class_ B.mediaObject, A.src "images/avatar.svg" ] [ ]
+			]
+		, H.div
+			[ A.class_ B.mediaBody ]
+			[ H.h4 [ A.classes [ A.className "from", B.mediaHeading ] ] [ H.text from.name ]
+			, H.span [ A.class_ $ A.className "message-content" ] [ messageTypeView message ]
+			]
 		]
 
 messagesView :: forall p m. (Alternative m) => [Message] -> Channel -> H.HTML p (m Input)
 messagesView messages selectedChannel =
 	H.div
-		[ A.class_ $ A.className "messages" ]
-		[ H.h2 [] [ H.text (unChannel selectedChannel).name ]
-		, H.ul [ A.class_ $ A.className "messages-list" ] (messageView <$> messages)
+		[ A.classes [ A.className "messages" ] ]
+		[ H.div
+			[ A.class_ $ B.mediaBody ]
+			[ H.h1 [ ] [ H.text (unChannel selectedChannel).name ]
+			, H.div [ A.class_ $ A.className "messages-list" ] (messageView <$> messages)
+			]
 		]
