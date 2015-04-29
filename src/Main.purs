@@ -45,6 +45,7 @@ import Models.Input
 import Models.User
 import Models.Message
 import Models.State
+import Views.Channel
 import Views.Message
 
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
@@ -102,61 +103,9 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
             State ts ->
                 H.div
                     [ A.class_ B.container ]
-                    [ H.h1 [ A.id_ "header" ] [ H.text "todo list" ]
-                    , toolbar st
-                    , H.div_ (zipWith task ts (0 .. length ts))
+                    [ channelsView [ Channel { name: "Hi" } ] (Channel { name: "Hi" })
                     , messagesView messages (Channel { name: "Hi" })
                     ]
-
-    toolbar :: forall p st. Undo.UndoRedoState st -> H.HTML p (m Input)
-    toolbar st =
-        H.p
-            [ A.class_ B.btnGroup ]
-            [ H.button
-                [ A.classes [ B.btn, B.btnPrimary ]
-                , A.onClick (A.input_ $ NewTask Nothing)
-                ]
-                [ H.text "New Task" ]
-            , H.button
-                [ A.class_ B.btn
-                , A.enabled (Undo.canUndo st)
-                , A.onClick (A.input_ Undo)
-                ]
-                [ H.text "Undo" ]
-            , H.button
-                [ A.class_ B.btn
-                , A.enabled (Undo.canRedo st)
-                , A.onClick (A.input_ Redo)
-                ]
-                [ H.text "Redo" ]
-            ]
-
-    task :: forall p. Task -> Number -> H.HTML p (m Input)
-    task (Task task) index = H.p_ <<< pure $
-        BI.inputGroup
-            (Just (BI.RegularAddOn
-                (H.input
-                    [ A.class_ B.checkbox
-                    , A.type_ "checkbox"
-                    , A.checked task.completed
-                    , A.title "Mark as completed"
-                    , A.onChecked (A.input (MarkCompleted index))
-                    ]
-                    [])))
-            (H.input
-                [ A.classes [ B.formControl ]
-                , A.placeholder "Description"
-                , A.onValueChanged (A.input (UpdateDescription index))
-                , A.value task.description
-                ]
-                [])
-            (Just (BI.ButtonAddOn
-                (H.button
-                    [ A.classes [ B.btn, B.btnDefault ]
-                    , A.title "Remove task"
-                    , A.onClick (A.input_ $ RemoveTask index)
-                    ]
-                    [ H.text "x" ])))
 
     update :: State -> Input -> State
     update (State ts) (NewTask s) = State (ts ++ [Task { description: fromMaybe "" s, completed: false }])
