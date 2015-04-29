@@ -103,8 +103,17 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
             State ts ->
                 H.div
                     [ A.class_ B.container ]
-                    [ channelsView [ Channel { name: "Hi" } ] (Channel { name: "Hi" })
-                    , messagesView messages (Channel { name: "Hi" })
+                    [ H.div
+                        [ A.class_ B.row ]
+                        [ H.div
+                            [ A.class_ B.colMd3 ]
+                            [ channelsView [ Channel { name: "Hi" } ] (Channel { name: "Hi" })
+                            ]
+                        , H.div
+                            [ A.class_ B.colMd9 ]
+                            [ messagesView messages (Channel { name: "Hi" })
+                            ]
+                        ]
                     ]
 
     update :: State -> Input -> State
