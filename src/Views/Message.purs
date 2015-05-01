@@ -3,6 +3,7 @@ module Views.Message
 	) where
 
 import Data.Array
+import Data.Maybe
 
 import Control.Alternative
 
@@ -28,7 +29,7 @@ messageCodeClass = A.className "message-code"
 
 
 -- Views
-messageTypeView :: forall p m. (Alternative m) => MessageType -> H.HTML p (m Input)
+messageTypeView :: forall p m. (Alternative m) => MessageType -> H.HTML p (m _)
 messageTypeView message =
 	case message of
 		TextMessage { text: text } ->
@@ -38,7 +39,7 @@ messageTypeView message =
 		otherwise ->
 			H.span [ A.class_ $ A.className "message" ] []
 
-messageView :: forall p m. (Alternative m) => Message -> H.HTML p (m Input)
+messageView :: forall p m. (Alternative m) => Message -> H.HTML p (m _)
 messageView { from: from, to: to, message: message } =
 	H.div
 		[ A.classes [ A.className "message", B.media ] ]
@@ -53,8 +54,9 @@ messageView { from: from, to: to, message: message } =
 			]
 		]
 
-messagesView :: forall p m. (Alternative m) => [Message] -> Channel -> H.HTML p (m Input)
-messagesView messages selectedChannel =
+messagesView :: forall p m. (Alternative m) => [Message] -> Maybe Channel -> H.HTML p (m _)
+messagesView messages Nothing = H.div_ [ H.text "no channel selected" ]
+messagesView messages (Just selectedChannel) =
 	H.div
 		[ A.classes [ A.className "messages" ] ]
 		[ H.div
@@ -63,3 +65,6 @@ messagesView messages selectedChannel =
 			, H.div [ A.class_ $ A.className "messages-list" ] (messageView <$> messages)
 			]
 		]
+
+--messagesComponent :: forall p m. (Applicative m) => Component p m in out
+--messagesComponent

@@ -52,11 +52,6 @@ import Views.Message
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
 appendToBody e = document globalWindow >>= (body >=> flip appendChild e)
 
-newtype Task = Task { description :: String, completed :: Boolean }
-
--- | The state of the application
-data State = State [Task]
-
 user1 :: User
 user1 =
     { name: "Harry"
@@ -97,31 +92,28 @@ channels =
     ]
 
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
-ui :: forall p m. (Alternative m) => Component p m Input Input
-ui = component (render <$> stateful (State []) update)
+ui :: forall p m. (Alternative m) => Component p m _ _
+ui = component (render <$> stateful emptyState update)
     where
-    render :: forall p. State -> H.HTML p (m Input)
-    render (State st) =
+    render :: forall p. State -> H.HTML p (m _)
+    render st =
         H.div
             [ A.class_ B.container ]
             [ H.div
                 [ A.class_ B.row ]
                 [ H.div
                     [ A.class_ B.colMd3 ]
-                    [ channelsView channels (Channel { name: "Hi" })
+                    [ channelsView channels st.selectedChannel
                     ]
                 , H.div
                     [ A.class_ B.colMd9 ]
-                    [ messagesView messages (Channel { name: "Hi" })
+                    [ messagesView messages st.selectedChannel
                     ]
                 ]
             ]
 
-    update :: State -> Input -> State
-    update (State ts) (NewTask s) = State (ts ++ [Task { description: fromMaybe "" s, completed: false }])
-    update (State ts) (UpdateDescription i description) = State $ modifyAt i (\(Task t) -> Task (t { description = description })) ts
-    update (State ts) (MarkCompleted i completed) = State $ modifyAt i (\(Task t) -> Task (t { completed = completed })) ts
-    update (State ts) (RemoveTask i) = State $ deleteAt i 1 ts
+    update :: State -> _ -> State
+    update st _ = st
 
 main = do
     Tuple node driver <- runUI ui

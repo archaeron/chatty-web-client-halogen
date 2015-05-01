@@ -26,24 +26,35 @@ import qualified Models.State as AS
 
 data State = State (Maybe Channel)
 
-channelViewSelectClass :: Channel -> Channel -> A.ClassName
-channelViewSelectClass channel selectedChannel =
-    if channel == selectedChannel then
-        A.className "selected"
-    else
-        A.className "not-selected"
+-- Classes
 
-channelView :: forall p m. (Alternative m) => Channel -> Channel -> H.HTML p (m AS.Input)
+selectedClass :: A.ClassName
+selectedClass = A.className "selected"
+
+notSelectedClass :: A.ClassName
+notSelectedClass = A.className "not-selected"
+
+--- Views
+
+channelViewSelectClass :: Maybe Channel -> Channel -> A.ClassName
+channelViewSelectClass Nothing channel = notSelectedClass
+channelViewSelectClass (Just selectedChannel) channel =
+    if channel == selectedChannel then
+        selectedClass
+    else
+        notSelectedClass
+
+channelView :: forall p m. (Alternative m) => Maybe Channel -> Channel -> H.HTML p (m _)
 channelView selectedChannel channel =
     H.li [ A.class_ $ A.className "channel" ]
         [ H.span
-            [ A.classes [ A.className "channel-name", channelViewSelectClass channel selectedChannel ]
+            [ A.classes [ A.className "channel-name", channelViewSelectClass selectedChannel channel ]
             --, E.onClick ctx (const $ SelectChannel channel)
             ]
             [ H.text (unChannel channel).name ]
         ]
 
-channelsView :: forall p m. (Alternative m) => [Channel] -> Channel -> H.HTML p (m AS.Input)
+channelsView :: forall p m. (Alternative m) => [Channel] -> Maybe Channel -> H.HTML p (m _)
 channelsView channels selectedChannel =
     H.div [ A.class_ $ A.className "channels" ]
         [ H.h2_ [ H.text "Channels" ]
