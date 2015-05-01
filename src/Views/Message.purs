@@ -1,4 +1,6 @@
-module Views.Message where
+module Views.Message
+	( messagesView
+	) where
 
 import Data.Array
 
@@ -17,13 +19,22 @@ import Models.Message
 import Models.State
 import Views.Types
 
+-- Classes
+messageTextClass :: A.ClassName
+messageTextClass = A.className "message-text"
+
+messageCodeClass :: A.ClassName
+messageCodeClass = A.className "message-code"
+
+
+-- Views
 messageTypeView :: forall p m. (Alternative m) => MessageType -> H.HTML p (m Input)
 messageTypeView message =
 	case message of
 		TextMessage { text: text } ->
-			H.span [ A.class_ $ A.className "message-text" ] [ H.text text ]
+			H.span [ A.class_ messageTextClass ] [ H.text text ]
 		CodeMessage { language: language, text: text } ->
-			H.pre [ A.class_ $ A.className "message-code" ] [ H.text text ]
+			H.pre [ A.class_ messageCodeClass ] [ H.text text ]
 		otherwise ->
 			H.span [ A.class_ $ A.className "message" ] []
 

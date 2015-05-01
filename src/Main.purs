@@ -46,6 +46,7 @@ import Models.User
 import Models.Message
 import Models.State
 import Views.Channel
+--import Views.Input
 import Views.Message
 
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
@@ -86,35 +87,35 @@ messages =
         }
     ]
 
-instance inputSupportsUndoRedo :: Undo.SupportsUndoRedo Input where
-    fromUndoRedo Undo.Undo = Undo
-    fromUndoRedo Undo.Redo = Redo
-    toUndoRedo Undo = Just Undo.Undo
-    toUndoRedo Redo = Just Undo.Redo
-    toUndoRedo _ = Nothing
+channels :: [ Channel ]
+channels =
+    [ Channel { name: "PureScript" }
+    , Channel { name: "F#" }
+    , Channel { name: "Haskell" }
+    , Channel { name: "Elm" }
+    , Channel { name: "Idris" }
+    ]
 
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
 ui :: forall p m. (Alternative m) => Component p m Input Input
-ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUndoRedo update))
+ui = component (render <$> stateful (State []) update)
     where
-    render :: forall p. Undo.UndoRedoState State -> H.HTML p (m Input)
-    render st =
-        case Undo.getState st of
-            State ts ->
-                H.div
-                    [ A.class_ B.container ]
-                    [ H.div
-                        [ A.class_ B.row ]
-                        [ H.div
-                            [ A.class_ B.colMd3 ]
-                            [ channelsView [ Channel { name: "Hi" } ] (Channel { name: "Hi" })
-                            ]
-                        , H.div
-                            [ A.class_ B.colMd9 ]
-                            [ messagesView messages (Channel { name: "Hi" })
-                            ]
-                        ]
+    render :: forall p. State -> H.HTML p (m Input)
+    render (State st) =
+        H.div
+            [ A.class_ B.container ]
+            [ H.div
+                [ A.class_ B.row ]
+                [ H.div
+                    [ A.class_ B.colMd3 ]
+                    [ channelsView channels (Channel { name: "Hi" })
                     ]
+                , H.div
+                    [ A.class_ B.colMd9 ]
+                    [ messagesView messages (Channel { name: "Hi" })
+                    ]
+                ]
+            ]
 
     update :: State -> Input -> State
     update (State ts) (NewTask s) = State (ts ++ [Task { description: fromMaybe "" s, completed: false }])
@@ -125,4 +126,3 @@ ui = component (render <$> stateful (Undo.undoRedoState (State [])) (Undo.withUn
 main = do
     Tuple node driver <- runUI ui
     appendToBody node
-    Router.onHashChange (NewTask <<< Just <<< S.drop 1 <<< Router.runHash) driver
