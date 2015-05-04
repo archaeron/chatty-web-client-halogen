@@ -18,6 +18,8 @@ import qualified Halogen.HTML.Events as A
 import qualified Halogen.HTML.Events.Forms as A
 import qualified Halogen.HTML.Events.Handler as E
 
+import qualified Halogen.Themes.Bootstrap3 as B
+
 import Models.Action
 import Models.Channel
 import Views.Types
@@ -46,7 +48,7 @@ channelViewSelectClass (Just selectedChannel) channel =
 
 channelView :: forall m. (Alternative m) => Maybe Channel -> Channel -> H.HTML (m _)
 channelView selectedChannel channel =
-    H.li [ A.class_ $ A.className "channel" ]
+    H.li [ A.classes [ A.className "channel", B.listGroupItem ] ]
         [ H.span
             [ A.classes [ A.className "channel-name", channelViewSelectClass selectedChannel channel ]
             --, E.onClick ctx (const $ SelectChannel channel)
@@ -58,5 +60,5 @@ channelsView :: forall m. (Alternative m) => [Channel] -> Maybe Channel -> H.HTM
 channelsView channels selectedChannel =
     H.div [ A.class_ $ A.className "channels" ]
         [ H.h2_ [ H.text "Channels" ]
-        , H.ul [ A.class_ $ A.className "channels-list" ] ((channelView selectedChannel) <$> channels)
+        , H.ul [ A.classes [ A.className "channels-list", B.listGroup ] ] ((channelView selectedChannel) <$> channels)
         ]
