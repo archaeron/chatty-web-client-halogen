@@ -35,7 +35,7 @@ messageTypeView message =
 		TextMessage { text: text } ->
 			H.span [ A.class_ messageTextClass ] [ H.text text ]
 		CodeMessage { language: language, text: text } ->
-			H.pre [ A.class_ messageCodeClass ] [ H.text text ]
+			H.pre [ A.class_ messageCodeClass ] [ H.code [ A.class_ $ A.className language ] [ H.text text ] ]
 		otherwise ->
 			H.span [ A.class_ $ A.className "message" ] []
 

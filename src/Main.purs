@@ -119,8 +119,15 @@ What here shall miss, our toil shall strive to mend."""
         { from: user2
         , to: user1
         , message: CodeMessage
-            { language: "PureScript"
+            { language: "haskell"
             , text: "add a b = a + b" }
+        }
+    ,
+        { from: user1
+        , to: user2
+        , message: CodeMessage
+            { language: "javascript"
+            , text: "function(a, b) { return a + b; }" }
         }
     ]
 
