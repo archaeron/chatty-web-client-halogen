@@ -92,10 +92,10 @@ channels =
     ]
 
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
-ui :: forall p m. (Alternative m) => Component p m _ _
-ui = component (render <$> stateful emptyState update)
+ui :: forall p m. (Alternative m) => Component m _ _
+ui = render <$> stateful emptyState update
     where
-    render :: forall p. State -> H.HTML p (m _)
+    render :: State -> H.HTML (m _)
     render st =
         H.div
             [ A.class_ B.container ]

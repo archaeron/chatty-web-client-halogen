@@ -44,7 +44,7 @@ channelViewSelectClass (Just selectedChannel) channel =
     else
         notSelectedClass
 
-channelView :: forall p m. (Alternative m) => Maybe Channel -> Channel -> H.HTML p (m _)
+channelView :: forall m. (Alternative m) => Maybe Channel -> Channel -> H.HTML (m _)
 channelView selectedChannel channel =
     H.li [ A.class_ $ A.className "channel" ]
         [ H.span
@@ -54,27 +54,9 @@ channelView selectedChannel channel =
             [ H.text (unChannel channel).name ]
         ]
 
-channelsView :: forall p m. (Alternative m) => [Channel] -> Maybe Channel -> H.HTML p (m _)
+channelsView :: forall m. (Alternative m) => [Channel] -> Maybe Channel -> H.HTML (m _)
 channelsView channels selectedChannel =
     H.div [ A.class_ $ A.className "channels" ]
         [ H.h2_ [ H.text "Channels" ]
         , H.ul [ A.class_ $ A.className "channels-list" ] ((channelView selectedChannel) <$> channels)
         ]
-
-channelsComponent :: forall p m. (Applicative m) => Component p m Channel [Channel]
-channelsComponent = component (render <$> stateful (State Nothing) update)
-    where
-    render :: State -> H.HTML _ (m [Channel])
-    render (State channel) =
-        H.div_
-            [ H.span [ A.onClick $ A.input_ [(Channel { name: "Hello" })] ] [ H.text "Channel" ]
-            , H.span_ [ H.text $ showChannel channel ]
-            ]
-
-    update :: State -> Channel -> State
-    update (State _) channel = State (Just channel)
-
-
-showChannel :: Maybe Channel -> String
-showChannel maybeChannel =
-    maybe "" (\(Channel c) -> c.name) maybeChannel
