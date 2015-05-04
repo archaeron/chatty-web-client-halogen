@@ -70,15 +70,57 @@ messages =
         { from: user1
         , to: user2
         , message: TextMessage
-            { text: "Hello"
+            { text: """Two households, both alike in dignity,
+  In fair Verona, where we lay our scene,
+From ancient grudge break to new mutiny,
+  Where civil blood makes civil hands unclean.
+From forth the fatal loins of these two foes
+  A pair of star-cross'd lovers take their life;
+Whose misadventur'd piteous overthrows
+  Doth with their death bury their parents' strife.
+The fearful passage of their death-mark'd love,
+  And the continuance of their parents' rage,
+Which but their children's end naught could remove,
+  Is now the two hours' traffic of our stage;
+The which, if you with patient ears attend,
+What here shall miss, our toil shall strive to mend."""
+            }
+        }
+    ,
+        { from: user2
+        , to: user1
+        , message: TextMessage
+            { text: """
+            Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
+            And, of course, stability isn't nearly so spectacular as instability.
+            And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
+            - Aldous Huxley, Brave New World"""
             }
         }
     ,
         { from: user1
         , to: user2
         , message: TextMessage
-            { text: "Hello"
+            { text: """Most human beings have an almost infinite capacity for taking things for granted. - Aldous Huxley, Brave New World"""
             }
+        }
+    ,
+        { from: user2
+        , to: user1
+        , message: TextMessage
+            { text: """
+            Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
+            And, of course, stability isn't nearly so spectacular as instability.
+            And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
+            - Aldous Huxley, Brave New World"""
+            }
+        }
+    ,
+        { from: user2
+        , to: user1
+        , message: CodeMessage
+            { language: "PureScript"
+            , text: "add a b = a + b" }
         }
     ]
 
@@ -91,9 +133,17 @@ channels =
     , Channel { name: "Idris" }
     ]
 
+testState :: State
+testState =
+	{ messages: messages
+	, user: Nothing
+	, channels: channels
+	, selectedChannel: Just (Channel { name: "PureScript" })
+	}
+
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
 ui :: forall p m. (Alternative m) => Component m _ _
-ui = render <$> stateful emptyState update
+ui = render <$> stateful testState update
     where
     render :: State -> H.HTML (m _)
     render st =
