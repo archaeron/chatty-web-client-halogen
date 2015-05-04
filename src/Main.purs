@@ -159,11 +159,11 @@ ui = render <$> stateful testState update
             [ H.div
                 [ A.class_ B.row ]
                 [ H.div
-                    [ A.class_ B.colMd3 ]
+                    [ A.class_ B.colMd2 ]
                     [ channelsView channels st.selectedChannel
                     ]
                 , H.div
-                    [ A.class_ B.colMd9 ]
+                    [ A.class_ B.colMd10 ]
                     [ messagesView messages st.selectedChannel
                     ]
                 ]
