@@ -1,6 +1,5 @@
 module Views.Channel
-     ( channelView
-    , channelsView
+    ( channelsView
     ) where
 
 --import Data.Array
