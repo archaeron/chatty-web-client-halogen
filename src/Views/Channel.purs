@@ -5,10 +5,9 @@ module Views.Channel
 --import Data.Array
 import Data.Maybe
 
-import Halogen
-
 import Control.Alternative
 
+import Halogen
 import Halogen.Component
 import Halogen.Signal
 import qualified Halogen.HTML as H
