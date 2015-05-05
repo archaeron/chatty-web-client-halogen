@@ -143,7 +143,7 @@ channels =
 testState :: State
 testState =
 	{ messages: messages
-	, user: Nothing
+	, user: user1
 	, channels: channels
 	, selectedChannel: Just (Channel { name: "PureScript" })
 	}

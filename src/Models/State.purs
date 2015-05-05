@@ -10,16 +10,16 @@ import Models.User
 type State =
 	{ messages :: [ Message ]
 	--, editText :: String
-	, user :: Maybe User
+	, user :: User
 	, channels :: [ Channel ]
 	, selectedChannel :: Maybe Channel
 	--, selectedInputType :: InputType
 	}
 
-emptyState :: State
-emptyState =
+emptyState :: User -> State
+emptyState user =
 	{ messages: []
-	, user: Nothing
+	, user: user
 	, channels: []
 	, selectedChannel: Nothing
 	}
