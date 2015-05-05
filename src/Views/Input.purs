@@ -1,6 +1,6 @@
 module Views.Input
-    ( inputView
-    ) where
+	( inputView
+	) where
 
 import Control.Alternative
 
@@ -13,15 +13,17 @@ import qualified Halogen.HTML.Events.Handler as E
 import qualified Halogen.Themes.Bootstrap3 as B
 
 import Models.Action
+import Models.Message
 
 
 inputView :: forall m. (Alternative m) => H.HTML (m _)
 inputView =
-    H.div
-        [ A.class_ $ A.className "input-view" ]
-        [ H.input
-            [ A.classes [ B.formControl ]
-            , A.placeholder "Message"
-            ]
-            []
-        ]
+	H.div
+		[ A.class_ $ A.className "input-view" ]
+		[ H.input
+			[ A.classes [ B.formControl ]
+			, A.placeholder "Message"
+			, A.onValueChanged (A.input $ \text -> SendMessage $ TextMessage { text: text })
+			]
+			[]
+		]
