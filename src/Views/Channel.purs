@@ -20,7 +20,6 @@ import qualified Halogen.Themes.Bootstrap3 as B
 
 import Models.Action
 import Models.Channel
-import Views.Types
 
 import qualified Models.State as AS
 

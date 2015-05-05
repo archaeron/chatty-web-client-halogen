@@ -18,7 +18,6 @@ import qualified Halogen.Themes.Bootstrap3 as B
 import Models.Channel
 import Models.Message
 import Models.State
-import Views.Types
 
 -- Classes
 messageTextClass :: A.ClassName
