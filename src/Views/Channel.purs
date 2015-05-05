@@ -1,6 +1,6 @@
 module Views.Channel
-    ( channelsView
-    ) where
+	( channelsView
+	) where
 
 --import Data.Array
 import Data.Maybe
@@ -39,24 +39,24 @@ notSelectedClass = A.className "not-selected"
 channelViewSelectClass :: Maybe Channel -> Channel -> A.ClassName
 channelViewSelectClass Nothing channel = notSelectedClass
 channelViewSelectClass (Just selectedChannel) channel =
-    if channel == selectedChannel then
-        selectedClass
-    else
-        notSelectedClass
+	if channel == selectedChannel then
+		selectedClass
+	else
+		notSelectedClass
 
 channelView :: forall m. (Alternative m) => Maybe Channel -> Channel -> H.HTML (m _)
 channelView selectedChannel channel =
-    H.li [ A.classes [ A.className "channel", B.listGroupItem ] ]
-        [ H.span
-            [ A.classes [ A.className "channel-name", channelViewSelectClass selectedChannel channel ]
-            --, E.onClick ctx (const $ SelectChannel channel)
-            ]
-            [ H.text (unChannel channel).name ]
-        ]
+	H.li [ A.classes [ A.className "channel", B.listGroupItem ] ]
+		[ H.span
+			[ A.classes [ A.className "channel-name", channelViewSelectClass selectedChannel channel ]
+			--, E.onClick ctx (const $ SelectChannel channel)
+			]
+			[ H.text (unChannel channel).name ]
+		]
 
 channelsView :: forall m. (Alternative m) => [Channel] -> Maybe Channel -> H.HTML (m _)
 channelsView channels selectedChannel =
-    H.div [ A.class_ $ A.className "channels" ]
-        [ H.h2_ [ H.text "Channels" ]
-        , H.ul [ A.classes [ A.className "channels-list", B.listGroup ] ] ((channelView selectedChannel) <$> channels)
-        ]
+	H.div [ A.class_ $ A.className "channels" ]
+		[ H.h2_ [ H.text "Channels" ]
+		, H.ul [ A.classes [ A.className "channels-list", B.listGroup ] ] ((channelView selectedChannel) <$> channels)
+		]

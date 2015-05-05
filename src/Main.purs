@@ -54,23 +54,23 @@ appendToBody e = document globalWindow >>= (body >=> flip appendChild e)
 
 user1 :: User
 user1 =
-    { name: "Harry"
-    , email: "harry@hogwarts.com"
-    }
+	{ name: "Harry"
+	, email: "harry@hogwarts.com"
+	}
 
 user2 :: User
 user2 =
-    { name: "Ben"
-    , email: "ben@kenobi.ch"
-    }
+	{ name: "Ben"
+	, email: "ben@kenobi.ch"
+	}
 
 messages :: [Message]
 messages =
-    [
-        { from: user1
-        , to: user2
-        , message: TextMessage
-            { text: """Two households, both alike in dignity,
+	[
+		{ from: user1
+		, to: user2
+		, message: TextMessage
+			{ text: """Two households, both alike in dignity,
   In fair Verona, where we lay our scene,
 From ancient grudge break to new mutiny,
   Where civil blood makes civil hands unclean.
@@ -84,61 +84,61 @@ Which but their children's end naught could remove,
   Is now the two hours' traffic of our stage;
 The which, if you with patient ears attend,
 What here shall miss, our toil shall strive to mend."""
-            }
-        }
-    ,
-        { from: user2
-        , to: user1
-        , message: TextMessage
-            { text: """
-            Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
-            And, of course, stability isn't nearly so spectacular as instability.
-            And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
-            - Aldous Huxley, Brave New World"""
-            }
-        }
-    ,
-        { from: user1
-        , to: user2
-        , message: TextMessage
-            { text: """Most human beings have an almost infinite capacity for taking things for granted. - Aldous Huxley, Brave New World"""
-            }
-        }
-    ,
-        { from: user2
-        , to: user1
-        , message: TextMessage
-            { text: """
-            Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
-            And, of course, stability isn't nearly so spectacular as instability.
-            And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
-            - Aldous Huxley, Brave New World"""
-            }
-        }
-    ,
-        { from: user2
-        , to: user1
-        , message: CodeMessage
-            { language: "haskell"
-            , text: "add a b = a + b" }
-        }
-    ,
-        { from: user1
-        , to: user2
-        , message: CodeMessage
-            { language: "javascript"
-            , text: "function(a, b) { return a + b; }" }
-        }
-    ]
+			}
+		}
+	,
+		{ from: user2
+		, to: user1
+		, message: TextMessage
+			{ text: """
+			Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
+			And, of course, stability isn't nearly so spectacular as instability.
+			And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
+			- Aldous Huxley, Brave New World"""
+			}
+		}
+	,
+		{ from: user1
+		, to: user2
+		, message: TextMessage
+			{ text: """Most human beings have an almost infinite capacity for taking things for granted. - Aldous Huxley, Brave New World"""
+			}
+		}
+	,
+		{ from: user2
+		, to: user1
+		, message: TextMessage
+			{ text: """
+			Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
+			And, of course, stability isn't nearly so spectacular as instability.
+			And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
+			- Aldous Huxley, Brave New World"""
+			}
+		}
+	,
+		{ from: user2
+		, to: user1
+		, message: CodeMessage
+			{ language: "haskell"
+			, text: "add a b = a + b" }
+		}
+	,
+		{ from: user1
+		, to: user2
+		, message: CodeMessage
+			{ language: "javascript"
+			, text: "function(a, b) { return a + b; }" }
+		}
+	]
 
 channels :: [ Channel ]
 channels =
-    [ Channel { name: "PureScript" }
-    , Channel { name: "F#" }
-    , Channel { name: "Haskell" }
-    , Channel { name: "Elm" }
-    , Channel { name: "Idris" }
-    ]
+	[ Channel { name: "PureScript" }
+	, Channel { name: "F#" }
+	, Channel { name: "Haskell" }
+	, Channel { name: "Elm" }
+	, Channel { name: "Idris" }
+	]
 
 testState :: State
 testState =
@@ -151,34 +151,34 @@ testState =
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
 ui :: forall p m. (Alternative m) => Component m _ _
 ui = render <$> stateful testState update
-    where
-    render :: State -> H.HTML (m _)
-    render st =
-        H.div
-            [ A.class_ B.container ]
-            [ H.div
-                [ A.class_ B.row ]
-                [ H.div
-                    [ A.class_ B.colMd2 ]
-                    [ channelsView channels st.selectedChannel
-                    ]
-                , H.div
-                    [ A.class_ B.colMd10 ]
-                    [ messagesView messages st.selectedChannel
-                    ]
-                ]
-            , H.div
-                [ A.class_ B.row ]
-                [ H.div
-                    [ A.classes [ B.colMd10, B.colMdOffset2 ] ]
-                    [ inputView
-                    ]
-                ]
-            ]
+	where
+	render :: State -> H.HTML (m _)
+	render st =
+		H.div
+			[ A.class_ B.container ]
+			[ H.div
+				[ A.class_ B.row ]
+				[ H.div
+					[ A.class_ B.colMd2 ]
+					[ channelsView channels st.selectedChannel
+					]
+				, H.div
+					[ A.class_ B.colMd10 ]
+					[ messagesView messages st.selectedChannel
+					]
+				]
+			, H.div
+				[ A.class_ B.row ]
+				[ H.div
+					[ A.classes [ B.colMd10, B.colMdOffset2 ] ]
+					[ inputView
+					]
+				]
+			]
 
-    update :: State -> _ -> State
-    update st _ = st
+	update :: State -> _ -> State
+	update st _ = st
 
 main = do
-    Tuple node driver <- runUI ui
-    appendToBody node
+	Tuple node driver <- runUI ui
+	appendToBody node
