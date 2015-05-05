@@ -107,17 +107,6 @@ What here shall miss, our toil shall strive to mend."""
 	,
 		{ from: user2
 		, to: user1
-		, message: TextMessage
-			{ text: """
-			Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
-			And, of course, stability isn't nearly so spectacular as instability.
-			And being contented has none of the glamour of a good fight against misfortune, none of the picturesqueness of a struggle with temptation, or a fatal overthrow by passion or doubt. Happiness is never grand.
-			- Aldous Huxley, Brave New World"""
-			}
-		}
-	,
-		{ from: user2
-		, to: user1
 		, message: CodeMessage
 			{ language: "haskell"
 			, text: "add a b = a + b" }
