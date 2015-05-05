@@ -45,10 +45,12 @@ channelViewSelectClass (Just selectedChannel) channel =
 
 channelView :: forall m. (Alternative m) => Maybe Channel -> Channel -> H.HTML (m _)
 channelView selectedChannel channel =
-	H.li [ A.classes [ A.className "channel", B.listGroupItem ] ]
+	H.li
+		[ A.classes [ A.className "channel", B.listGroupItem ]
+		, A.onClick $ A.input_ $ SelectChannel channel
+		]
 		[ H.span
 			[ A.classes [ A.className "channel-name", channelViewSelectClass selectedChannel channel ]
-			--, E.onClick ctx (const $ SelectChannel channel)
 			]
 			[ H.text (unChannel channel).name ]
 		]

@@ -168,6 +168,8 @@ ui = render <$> stateful testState update
 	update :: State -> Action -> State
 	update st (SendMessage message) =
 		st { messages = st.messages ++ [{ from: st.user, to: user2, message: message }] }
+	update st (SelectChannel channel) =
+		st { selectedChannel = Just channel }
 	update st _ = st
 
 main = do
