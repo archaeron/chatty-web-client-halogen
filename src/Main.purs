@@ -46,7 +46,7 @@ import Models.User
 import Models.Message
 import Models.State
 import Views.Channel
---import Views.Input
+import Views.Input
 import Views.Message
 
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
@@ -165,6 +165,13 @@ ui = render <$> stateful testState update
                 , H.div
                     [ A.class_ B.colMd10 ]
                     [ messagesView messages st.selectedChannel
+                    ]
+                ]
+            , H.div
+                [ A.class_ B.row ]
+                [ H.div
+                    [ A.classes [ B.colMd10, B.colMdOffset2 ] ]
+                    [ inputView
                     ]
                 ]
             ]
