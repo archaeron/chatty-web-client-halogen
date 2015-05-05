@@ -18,8 +18,8 @@ type State =
 
 emptyState :: State
 emptyState =
-	{ messages: []
-	, user: Nothing
-	, channels: []
-	, selectedChannel: Nothing
-	}
+    { messages: []
+    , user: Nothing
+    , channels: []
+    , selectedChannel: Nothing
+    }
