@@ -34,9 +34,12 @@ import qualified Halogen.HTML.Attributes as A
 import qualified Halogen.HTML.Events as A
 import qualified Halogen.HTML.Events.Forms as A
 import qualified Halogen.HTML.Events.Handler as E
+import qualified Halogen.HTML.Events.Monad as E
 
 import qualified Halogen.Themes.Bootstrap3 as B
 import qualified Halogen.Themes.Bootstrap3.InputGroup as BI
+
+import Network.HTTP.Affjax
 
 import Models.Action
 import Models.Channel
@@ -138,10 +141,10 @@ testState =
 	}
 
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
-ui :: forall p m. (Alternative m) => Component m _ _
+ui :: forall eff. Component (E.Event (HalogenEffects (ajax :: AJAX | eff))) _ _
 ui = render <$> stateful testState update
 	where
-	render :: State -> H.HTML (m _)
+	render :: State -> H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
 	render st =
 		H.div
 			[ A.class_ B.container ]
