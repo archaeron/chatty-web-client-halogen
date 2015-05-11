@@ -68,7 +68,7 @@ messages :: [Message]
 messages =
 	[
 		{ from: user1
-		, to: user2
+		, to: Channel { name: "PureScript" }
 		, message: TextMessage
 			{ text: """Two households, both alike in dignity,
   In fair Verona, where we lay our scene,
@@ -88,7 +88,7 @@ What here shall miss, our toil shall strive to mend."""
 		}
 	,
 		{ from: user2
-		, to: user1
+		, to: Channel { name: "PureScript" }
 		, message: TextMessage
 			{ text: """
 			Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
@@ -99,21 +99,21 @@ What here shall miss, our toil shall strive to mend."""
 		}
 	,
 		{ from: user1
-		, to: user2
+		, to: Channel { name: "PureScript" }
 		, message: TextMessage
 			{ text: """Most human beings have an almost infinite capacity for taking things for granted. - Aldous Huxley, Brave New World"""
 			}
 		}
 	,
 		{ from: user2
-		, to: user1
+		, to: Channel { name: "PureScript" }
 		, message: CodeMessage
 			{ language: "haskell"
 			, text: "add a b = a + b" }
 		}
 	,
 		{ from: user1
-		, to: user2
+		, to: Channel { name: "PureScript" }
 		, message: CodeMessage
 			{ language: "javascript"
 			, text: "function(a, b) { return a + b; }" }
@@ -167,7 +167,7 @@ ui = render <$> stateful testState update
 
 	update :: State -> Action -> State
 	update st (SendMessage message) =
-		st { messages = st.messages ++ [{ from: st.user, to: user2, message: message }] }
+		st { messages = st.messages ++ [{ from: st.user, to: ( Channel { name: "PureScript" }), message: message }] }
 	update st (SelectChannel channel) =
 		st { selectedChannel = Just channel }
 	update st _ = st

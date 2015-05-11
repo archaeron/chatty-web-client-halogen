@@ -1,5 +1,6 @@
 module Models.Message where
 
+import Models.Channel
 import Models.User
 
 type TextMessage = { text :: String }
@@ -16,4 +17,8 @@ data MessageType
 	| FormulaMessage FormulaMessage
 	| FileMessage FileMessage
 
-type Message = { from :: User, to :: User, message :: MessageType }
+type Message =
+	{ from :: User
+	, to :: Channel
+	, message :: MessageType
+	}
