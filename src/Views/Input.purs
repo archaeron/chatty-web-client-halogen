@@ -27,7 +27,7 @@ import Control.Monad.Aff
 
 import Network.HTTP.Affjax
 
-inputView :: forall m. (Alternative m) => H.HTML (m _)
+inputView :: forall m eff. (Alternative m) => H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
 inputView =
 	H.div
 		[ A.class_ $ A.className "input-view" ]
@@ -45,7 +45,7 @@ inputView =
 
 
 handler :: forall eff. String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
-handler code = E.yield (SendMessage $ TextMessage { text: "" }) `E.andThen` \_ -> E.async compileAff
+handler code = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
