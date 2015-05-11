@@ -27,7 +27,7 @@ import Control.Monad.Aff
 
 import Network.HTTP.Affjax
 
-inputView :: forall m eff. (Alternative m) => H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
+inputView :: forall eff. H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
 inputView =
 	H.div
 		[ A.class_ $ A.className "input-view" ]
