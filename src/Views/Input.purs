@@ -19,6 +19,7 @@ import qualified Halogen.Themes.Bootstrap3 as B
 
 import Models.Action
 import Models.Message
+import Models.State
 
 import Control.Alt
 import Control.Monad.Eff
@@ -27,18 +28,18 @@ import Control.Monad.Aff
 
 import Network.HTTP.Affjax
 
-inputView :: forall eff. H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
-inputView =
+inputView :: forall eff. State -> H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
+inputView st =
 	H.div
 		[ A.class_ $ A.className "input-view" ]
-		[ H.input
+		[ H.textarea
 			[ A.classes [ B.formControl ]
 			, A.placeholder "Message"
-			, A.onValueChanged (A.input $ \text -> SendMessage $ TextMessage { text: text })
+			, A.onInput (A.input $ \text -> SetEditText text)
 			]
 			[]
 		, H.button
-			[ A.onClick  (\_ -> pure (handler "1+2"))
+			[ A.onClick  (\_ -> pure (handler st.editText))
 			]
 			[ H.text "Send"
 			]

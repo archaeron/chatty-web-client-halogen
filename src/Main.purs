@@ -135,6 +135,7 @@ channels =
 testState :: State
 testState =
 	{ messages: messages
+	, editText: ""
 	, user: user1
 	, channels: channels
 	, selectedChannel: Just (Channel { name: "PureScript" })
@@ -163,14 +164,19 @@ ui = render <$> stateful testState update
 				[ A.class_ B.row ]
 				[ H.div
 					[ A.classes [ B.colMd10, B.colMdOffset2 ] ]
-					[ inputView
+					[ inputView st
 					]
 				]
 			]
 
 	update :: State -> Action -> State
 	update st (SendMessage message) =
-		st { messages = st.messages ++ [{ from: st.user, to: ( Channel { name: "PureScript" }), message: message }] }
+		st
+			{ messages = st.messages ++ [{ from: st.user, to: ( Channel { name: "PureScript" }), message: message }]
+			, editText = ""
+			}
+	update st (SetEditText text) =
+		st { editText = text }
 	update st (SelectChannel channel) =
 		st { selectedChannel = Just channel }
 	update st _ = st

@@ -9,7 +9,7 @@ import Models.User
 
 type State =
 	{ messages :: [ Message ]
-	--, editText :: String
+	, editText :: String
 	, user :: User
 	, channels :: [ Channel ]
 	, selectedChannel :: Maybe Channel
@@ -19,6 +19,7 @@ type State =
 emptyState :: User -> State
 emptyState user =
 	{ messages: []
+	, editText: ""
 	, user: user
 	, channels: []
 	, selectedChannel: Nothing
