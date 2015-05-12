@@ -40,7 +40,8 @@ inputView =
 		, H.button
 			[ A.onClick  (\_ -> pure (handler "1+2"))
 			]
-			[]
+			[ H.text "Send"
+			]
 		]
 
 
