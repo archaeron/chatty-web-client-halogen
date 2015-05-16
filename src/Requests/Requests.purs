@@ -7,6 +7,7 @@ import qualified Halogen.HTML.Events.Monad as E
 import Data.Maybe (Maybe(..), maybe)
 import Data.Either
 import Data.Foreign.Class
+import Data.JSON
 import Control.Monad.Aff
 import Control.Alt
 import Network.HTTP.Affjax
@@ -15,6 +16,7 @@ import Network.HTTP.Affjax.Response
 import Network.HTTP.RequestHeader (RequestHeader(..))
 import Network.HTTP.Method (Method(..), methodToString)
 
+import Requests.Types
 import Models.Action
 import Models.Message
 
@@ -34,13 +36,27 @@ headers =
 	, ContentType Network.HTTP.MimeType.Common.applicationJSON
 	]
 
+sampleMessage = MessageRequest
+	{ content : "I'm a message"
+	, title : "I'm a title"
+	, lead : "I'm a lead"
+	, contentType : "text"
+	, to : 4
+	, language : ""
+	}
+
 handler :: forall eff. String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
 handler code = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
-		result <- postWithHeaders headers "http://halogen.ctor.ch/messages" code
-		let response = result.response
-		return case readProp "js" response <|> readProp "error" response of
-			Right js -> SendMessage $ TextMessage { text: js }
-			Left _ -> DoNothing
+		result <- postWithHeaders headers "http://127.0.0.1:8083/messages" $ encode sampleMessage
+		let response = decode result.response
+		return case response of
+			Just (MessageResponse msg) -> SendMessage $ TextMessage { text: msg.content }
+			Nothing -> DoNothing
+
+--getMessages :: forall eff. E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
+--getMessages = do
+--	result <- get "/api"
+--	return DoNothing
