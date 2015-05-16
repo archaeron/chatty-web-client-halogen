@@ -27,12 +27,19 @@ postWithHeaders headers url content =
 		, headers = headers
 		}
 
+headers :: [RequestHeader]
+headers =
+	[ RequestHeader "Authorization" "bla"
+	, Accept Network.HTTP.MimeType.Common.applicationJSON
+	, ContentType Network.HTTP.MimeType.Common.applicationJSON
+	]
+
 handler :: forall eff. String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
 handler code = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
-		result <- post "http://try.purescript.org/compile/text" code
+		result <- postWithHeaders headers "http://halogen.ctor.ch/messages" code
 		let response = result.response
 		return case readProp "js" response <|> readProp "error" response of
 			Right js -> SendMessage $ TextMessage { text: js }
