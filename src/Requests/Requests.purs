@@ -19,9 +19,13 @@ import Network.HTTP.Method (Method(..), methodToString)
 import Requests.Types
 import Models.Action
 import Models.Message
+import Models.Channel
 
 apiUrl :: URL
 apiUrl = "http://halogen.ctor.ch/v1/"
+
+requestURL :: URL -> URL
+requestURL url = apiUrl ++ url
 
 postWithHeaders :: forall e a b. (Requestable a, Respondable b) => [RequestHeader] -> URL -> a -> Affjax e b
 postWithHeaders headers url content =
@@ -29,6 +33,14 @@ postWithHeaders headers url content =
 		{ method = POST
 		, url = url
 		, content = Just content
+		, headers = headers
+		}
+
+getWithHeaders :: forall e a b. (Respondable b) => [RequestHeader] -> URL -> Affjax e b
+getWithHeaders headers url =
+	affjax $ defaultRequest
+		{ method = GET
+		, url = url
 		, headers = headers
 		}
 
@@ -53,13 +65,21 @@ handler code = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
-		result <- postWithHeaders headers (apiUrl ++ "messages") $ encode sampleMessage
+		result <- postWithHeaders headers (requestURL "messages") $ encode sampleMessage
 		let response = decode result.response
 		return case response of
 			Just (MessageResponse msg) -> SendMessage $ TextMessage { text: msg.content }
 			Nothing -> DoNothing
 
---getMessages :: forall eff. E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
---getMessages = do
---	result <- get "/api"
---	return DoNothing
+-- Channels
+
+getChannelsRequest :: forall e a. (Respondable a) => Affjax e a
+getChannelsRequest = getWithHeaders headers $ requestURL "channels"
+
+getChannels :: forall eff. Aff (ajax :: AJAX | eff) [Channel]
+getChannels = do
+	result <- getChannelsRequest
+	let response = decode result.response
+	return case response of
+		Just (MessageResponse msg) -> []
+		Nothing -> []

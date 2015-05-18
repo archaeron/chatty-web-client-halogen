@@ -39,6 +39,8 @@ import qualified Halogen.HTML.Events.Monad as E
 import qualified Halogen.Themes.Bootstrap3 as B
 import qualified Halogen.Themes.Bootstrap3.InputGroup as BI
 
+import Control.Monad.Aff
+import Control.Monad.Eff.Class
 import Network.HTTP.Affjax
 
 import Models.Action
@@ -142,8 +144,8 @@ testState =
 	}
 
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
-ui :: forall eff. Component (E.Event (HalogenEffects (ajax :: AJAX | eff))) _ _
-ui = render <$> stateful testState update
+ui :: forall eff. State -> Component (E.Event (HalogenEffects (ajax :: AJAX | eff))) _ _
+ui initialState = render <$> stateful initialState update
 	where
 	render :: State -> H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
 	render st =
@@ -183,6 +185,12 @@ ui = render <$> stateful testState update
 		st { selectedChannel = Just channel }
 	update st _ = st
 
-main = do
-	Tuple node driver <- runUI ui
-	appendToBody node
+init :: forall eff. Aff (ajax :: AJAX | eff) State
+init = do
+	channels <- Requests.Requests.getChannels
+	return testState { channels = channels }
+
+main = launchAff do
+	state <- init
+	Tuple node driver <- liftEff $ runUI $ ui testState
+	liftEff $ appendToBody node
