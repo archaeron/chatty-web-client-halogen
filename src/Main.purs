@@ -177,6 +177,8 @@ ui = render <$> stateful testState update
 			}
 	update st (SetEditText text) =
 		st { editText = text }
+	update st (SetChannels cs) =
+		st { channels = cs }
 	update st (SelectChannel channel) =
 		st { selectedChannel = Just channel }
 	update st _ = st

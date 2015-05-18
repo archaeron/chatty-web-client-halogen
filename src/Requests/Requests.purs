@@ -20,6 +20,9 @@ import Requests.Types
 import Models.Action
 import Models.Message
 
+apiUrl :: URL
+apiUrl = "http://halogen.ctor.ch/v1/"
+
 postWithHeaders :: forall e a b. (Requestable a, Respondable b) => [RequestHeader] -> URL -> a -> Affjax e b
 postWithHeaders headers url content =
 	affjax $ defaultRequest
@@ -50,7 +53,7 @@ handler code = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
-		result <- postWithHeaders headers "http://127.0.0.1:8083/messages" $ encode sampleMessage
+		result <- postWithHeaders headers (apiUrl ++ "messages") $ encode sampleMessage
 		let response = decode result.response
 		return case response of
 			Just (MessageResponse msg) -> SendMessage $ TextMessage { text: msg.content }
