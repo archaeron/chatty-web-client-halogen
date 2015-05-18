@@ -45,7 +45,6 @@ import Network.HTTP.Affjax
 
 import Models.Action
 import Models.Channel
-import Models.Group
 import Models.Input
 import Models.User
 import Models.Message

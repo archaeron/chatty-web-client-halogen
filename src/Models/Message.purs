@@ -7,7 +7,7 @@ type TextMessage = { text :: String }
 
 type CodeMessage = { language :: String, text :: String }
 
-type FormulaMessage = { }
+type FormulaMessage = { text :: String }
 
 type FileMessage = { }
 
