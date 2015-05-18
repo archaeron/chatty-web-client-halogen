@@ -59,8 +59,10 @@ instance messageResponseFromJSON :: FromJSON MessageResponse where
 
 instance channelFromJSON :: FromJSON Channel where
 	parseJSON (JObject o) = do
+		id <- o .: "id"
 		name <- o .: "name"
 		return $ Channel
-			{ name: name
+			{ id: id
+			, name: name
 			}
 	parseJSON _ = fail "parsing a channel failed"

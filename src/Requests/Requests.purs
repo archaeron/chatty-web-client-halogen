@@ -51,27 +51,27 @@ headers =
 	, ContentType Network.HTTP.MimeType.Common.applicationJSON
 	]
 
-sampleMessage = MessageRequest
-	{ content : "I'm a message"
-	, title : "I'm a title"
-	, lead : "I'm a lead"
+sampleMessage text = MessageRequest
+	{ content : text
+	, title : ""
+	, lead : ""
 	, contentType : "text"
 	, to : 4
 	, language : ""
 	}
 
 handler :: forall eff. String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
-handler code = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
+handler text = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
-		result <- postWithHeaders headers (requestURL "messages") $ encode sampleMessage
+		let requestData = sampleMessage text
+		let json = encode requestData
+		result <- postWithHeaders headers (requestURL "messages") json
 		let response = decode result.response
 		return case response of
 			Just (MessageResponse msg) -> SendMessage $ TextMessage { text: msg.content }
 			Nothing -> DoNothing
-
--- Channels
 
 getChannelsRequest :: forall e a. (Respondable a) => Affjax e a
 getChannelsRequest = getWithHeaders headers $ requestURL "channels"
