@@ -1,6 +1,7 @@
 module Requests.Types where
 
 import Data.JSON
+import Models.Channel
 
 data MessageRequest = MessageRequest
 	{ content :: String
@@ -34,7 +35,7 @@ data MessageResponse = MessageResponse
 	, to :: Number
 	}
 
-instance barFromJSON :: FromJSON MessageResponse where
+instance messageResponseFromJSON :: FromJSON MessageResponse where
 	parseJSON (JObject o) = do
 		content <- o .: "content"
 		contentType <- o .: "contentType"
@@ -55,3 +56,11 @@ instance barFromJSON :: FromJSON MessageResponse where
 			, to: to
 			}
 	parseJSON _ = fail "Bar parse failed."
+
+instance channelFromJSON :: FromJSON Channel where
+	parseJSON (JObject o) = do
+		name <- o .: "name"
+		return $ Channel
+			{ name: name
+			}
+	parseJSON _ = fail "parsing a channel failed"

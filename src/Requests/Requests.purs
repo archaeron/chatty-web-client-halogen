@@ -4,7 +4,7 @@ import Halogen (HalogenEffects())
 import qualified Halogen.HTML.Events.Handler as E
 import qualified Halogen.HTML.Events.Monad as E
 
-import Data.Maybe (Maybe(..), maybe)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Either
 import Data.Foreign.Class
 import Data.JSON
@@ -80,6 +80,4 @@ getChannels :: forall eff. Aff (ajax :: AJAX | eff) [Channel]
 getChannels = do
 	result <- getChannelsRequest
 	let response = decode result.response
-	return case response of
-		Just (MessageResponse msg) -> []
-		Nothing -> []
+	return $ fromMaybe [] response
