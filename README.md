@@ -10,3 +10,7 @@
 - `pulp dep install`
 - `pulp --watch browserify --to js/index.js`
 - open `index.html` in a browser
+
+# Current Status
+
+![Chatty 18.05.2015](https://raw.githubusercontent.com/archaeron/chatty-web-client-halogen/master/screenshots/chatty18052015.PNG)
