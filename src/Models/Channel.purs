@@ -1,11 +1,12 @@
 module Models.Channel where
 
 data Channel = Channel
-	{ name :: String
+	{ id :: Number
+	, name :: String
 	}
 
 unChannel (Channel c) = c
 
 instance eqChannel :: Eq Channel where
-	(==) (Channel a) (Channel b) = a.name == b.name
-	(/=) (Channel a) (Channel b) = a.name /= b.name
+	(==) (Channel a) (Channel b) = a.id == b.id
+	(/=) (Channel a) (Channel b) = a.id /= b.id

@@ -72,7 +72,7 @@ messages :: [Message]
 messages =
 	[
 		{ from: user1
-		, to: Channel { name: "PureScript" }
+		, to: Channel { id: 4, name: "PureScript" }
 		, message: TextMessage
 			{ text: """Two households, both alike in dignity,
   In fair Verona, where we lay our scene,
@@ -92,7 +92,7 @@ What here shall miss, our toil shall strive to mend."""
 		}
 	,
 		{ from: user2
-		, to: Channel { name: "PureScript" }
+		, to: Channel { id: 4, name: "PureScript" }
 		, message: TextMessage
 			{ text: """
 			Actual happiness always looks pretty squalid in comparison with the overcompensations for misery.
@@ -103,21 +103,21 @@ What here shall miss, our toil shall strive to mend."""
 		}
 	,
 		{ from: user1
-		, to: Channel { name: "PureScript" }
+		, to: Channel { id: 4, name: "PureScript" }
 		, message: TextMessage
 			{ text: """Most human beings have an almost infinite capacity for taking things for granted. - Aldous Huxley, Brave New World"""
 			}
 		}
 	,
 		{ from: user2
-		, to: Channel { name: "PureScript" }
+		, to: Channel { id: 4, name: "PureScript" }
 		, message: CodeMessage
 			{ language: "haskell"
 			, text: "add a b = a + b" }
 		}
 	,
 		{ from: user1
-		, to: Channel { name: "PureScript" }
+		, to: Channel { id: 4, name: "PureScript" }
 		, message: CodeMessage
 			{ language: "javascript"
 			, text: "function(a, b) { return a + b; }" }
@@ -130,7 +130,7 @@ testState =
 	, editText: ""
 	, user: user1
 	, channels: []
-	, selectedChannel: Just (Channel { name: "PureScript" })
+	, selectedChannel: Just (Channel { id: 4, name: "PureScript" })
 	}
 
 -- | The view is a state machine, consuming inputs, and generating HTML documents which in turn, generate new inputs
@@ -163,10 +163,13 @@ ui initialState = render <$> stateful initialState update
 
 	update :: State -> Action -> State
 	update st (SendMessage message) =
-		st
-			{ messages = st.messages ++ [{ from: st.user, to: ( Channel { name: "PureScript" }), message: message }]
-			, editText = ""
-			}
+		case st.selectedChannel of
+			Just selectedChannel ->
+				st
+					{ messages = st.messages ++ [{ from: st.user, to: selectedChannel, message: message }]
+					, editText = ""
+					}
+			Nothing -> st
 	update st (SetEditText text) =
 		st { editText = text }
 	update st (SetChannels cs) =
