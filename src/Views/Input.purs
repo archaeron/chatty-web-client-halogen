@@ -17,7 +17,7 @@ import Models.Action
 import Models.Message
 import Models.State
 
-import Requests.Requests (handler)
+import Requests.Requests (postMessage)
 
 import Control.Monad.Eff
 import Control.Monad.Eff.Class
@@ -35,7 +35,7 @@ inputView st =
 			]
 			[]
 		, H.button
-			[ A.onClick  (\_ -> pure (handler st.editText))
+			[ A.onClick  (\_ -> pure $ postMessage st.selectedChannel st.editText)
 			]
 			[ H.text "Send"
 			]

@@ -60,8 +60,8 @@ sampleMessage text = MessageRequest
 	, language : ""
 	}
 
-handler :: forall eff. String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
-handler text = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
+postMessage :: forall eff. (Maybe Channel) -> String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
+postMessage channel text = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
