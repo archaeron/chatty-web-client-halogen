@@ -125,21 +125,12 @@ What here shall miss, our toil shall strive to mend."""
 		}
 	]
 
-channels :: [ Channel ]
-channels =
-	[ Channel { name: "PureScript" }
-	, Channel { name: "F#" }
-	, Channel { name: "Haskell" }
-	, Channel { name: "Elm" }
-	, Channel { name: "Idris" }
-	]
-
 testState :: State
 testState =
 	{ messages: messages
 	, editText: ""
 	, user: user1
-	, channels: channels
+	, channels: []
 	, selectedChannel: Just (Channel { name: "PureScript" })
 	}
 
@@ -155,7 +146,7 @@ ui initialState = render <$> stateful initialState update
 				[ A.class_ B.row ]
 				[ H.div
 					[ A.class_ B.colMd2 ]
-					[ channelsView channels st.selectedChannel
+					[ channelsView st.channels st.selectedChannel
 					]
 				, H.div
 					[ A.class_ B.colMd10 ]
@@ -192,5 +183,5 @@ init = do
 
 main = launchAff do
 	state <- init
-	Tuple node driver <- liftEff $ runUI $ ui testState
+	Tuple node driver <- liftEff $ runUI $ ui state
 	liftEff $ appendToBody node
