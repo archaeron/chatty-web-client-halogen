@@ -3,6 +3,7 @@ module Views.Input
 	) where
 
 import Control.Alternative
+import Data.Maybe
 
 import Halogen
 import qualified Halogen.HTML as H
@@ -26,17 +27,20 @@ import Network.HTTP.Affjax
 
 inputView :: forall eff. State -> H.HTML (E.Event (HalogenEffects (ajax :: AJAX | eff)) Action)
 inputView st =
-	H.div
-		[ A.class_ $ A.className "input-view" ]
-		[ H.textarea
-			[ A.classes [ B.formControl ]
-			, A.placeholder "Message"
-			, A.onInput (A.input $ \text -> SetEditText text)
-			]
-			[]
-		, H.button
-			[ A.onClick  (\_ -> pure $ postMessage st.selectedChannel st.editText)
-			]
-			[ H.text "Send"
-			]
-		]
+	case st.selectedChannel of
+		Just channel ->
+			H.div
+				[ A.class_ $ A.className "input-view" ]
+				[ H.textarea
+					[ A.classes [ B.formControl ]
+					, A.placeholder "Message"
+					, A.onInput (A.input $ \text -> SetEditText text)
+					]
+					[ H.text st.editText ]
+				, H.button
+					[ A.onClick  (\_ -> pure $ postMessage channel st.editText)
+					]
+					[ H.text "Send"
+					]
+				]
+		Nothing -> H.div_ []

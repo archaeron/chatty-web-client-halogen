@@ -51,21 +51,22 @@ headers =
 	, ContentType Network.HTTP.MimeType.Common.applicationJSON
 	]
 
-sampleMessage text = MessageRequest
+sampleMessage :: Channel -> String -> MessageRequest
+sampleMessage (Channel to) text = MessageRequest
 	{ content : text
 	, title : ""
 	, lead : ""
 	, contentType : "text"
-	, to : 4
+	, to : to.id
 	, language : ""
 	}
 
-postMessage :: forall eff. (Maybe Channel) -> String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
+postMessage :: forall eff. Channel -> String -> E.Event (HalogenEffects (ajax :: AJAX | eff)) Action
 postMessage channel text = E.yield DoNothing `E.andThen` \_ -> E.async compileAff
 	where
 	compileAff :: Aff (HalogenEffects (ajax :: AJAX | eff)) Action
 	compileAff = do
-		let requestData = sampleMessage text
+		let requestData = sampleMessage channel text
 		let json = encode requestData
 		result <- postWithHeaders headers (requestURL "messages") json
 		let response = decode result.response
