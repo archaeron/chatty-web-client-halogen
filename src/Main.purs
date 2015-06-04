@@ -8,8 +8,6 @@ import Data.Array (zipWith, length, modifyAt, deleteAt, (..), (!!), map)
 
 import qualified Data.String as S
 
-import Debug.Trace
-
 import Control.Functor (($>))
 import Control.Alternative
 import Control.Bind
@@ -52,6 +50,10 @@ import Models.State
 import Views.Channel
 import Views.Input
 import Views.Message
+
+import qualified Debug.Trace as DB
+import Control.Monad.Aff.Debug.Trace (trace)
+import Requests.WebSockets
 
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
 appendToBody e = document globalWindow >>= (body >=> flip appendChild e)
@@ -183,7 +185,16 @@ init = do
 	channels <- Requests.Requests.getChannels
 	return testState { channels = channels }
 
-main = launchAff do
-	state <- init
-	Tuple node driver <- liftEff $ runUI $ ui state
-	liftEff $ appendToBody node
+onMessageHandler :: forall eff. String -> Eff (trace :: DB.Trace | eff) Unit
+onMessageHandler s = DB.trace $ "Message: " ++ s
+
+main =
+	launchAff do
+		ws <- webSocket "ws://echo.websocket.org" onMessageHandler
+		liftEff' $ push ws "hello"
+		trace "test"
+-- launchAff do
+
+	--state <- init
+	--Tuple node driver <- liftEff $ runUI $ ui state
+	--liftEff $ appendToBody node
