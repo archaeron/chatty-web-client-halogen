@@ -34,7 +34,7 @@ inputView st =
 				[ H.textarea
 					[ A.classes [ B.formControl ]
 					, A.placeholder "Message"
-					, A.onInput (A.input $ \text -> SetEditText text)
+					, A.onInput (A.input SetEditText)
 					]
 					[ H.text st.editText ]
 				, H.button
