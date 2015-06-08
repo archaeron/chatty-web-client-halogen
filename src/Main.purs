@@ -192,6 +192,7 @@ main =
 	launchAff do
 		ws <- webSocket "ws://echo.websocket.org" onMessageHandler
 		liftEff' $ push ws "hello"
+		liftEff' $ push ws "WebSocket test"
 		trace "test"
 -- launchAff do
 

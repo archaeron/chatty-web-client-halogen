@@ -3,7 +3,7 @@ module Requests.WebSockets where
 import Data.Function
 
 import Control.Monad.Eff
-import Control.Monad.Eff.Exception (Error())
+import qualified Control.Monad.Eff.Exception (Error()) as E
 import Control.Monad.Aff
 
 type WURL = String
@@ -11,6 +11,7 @@ type WURL = String
 data WSResponse
 	= Open
 	| Close
+	| Error String
 	| Message String
 
 foreign import data WS :: !
@@ -21,6 +22,7 @@ type WebSocketHandler eff = WSResponse -> Eff (ws :: WS | eff) Unit
 instance showWSResponse :: Show WSResponse where
 	show Open = "Open"
 	show Close = "Close"
+	show (Error e) = "Error " ++ e
 	show (Message s) = "Message " ++ s
 
 foreign import webSocketNative """
@@ -42,9 +44,16 @@ foreign import webSocketNative """
 							{
 								handler(new Message(messageEvent.data))();
 							};
+							ws.onerror = function(e)
+							{
+								handler(new Error(e))();
+							}
+							ws.onclose = function()
+							{
+								handler(new Close)();
+							}
 							callback(ws)();
 						};
-
 					}
 					catch (e)
 					{
@@ -57,7 +66,7 @@ foreign import webSocketNative """
 	""" :: forall e. Fn2
 						WURL
 						(WebSocketHandler e)
-						((Error -> Eff e Unit) -> (WebSocket -> Eff e Unit) -> Eff e Unit)
+						((E.Error -> Eff e Unit) -> (WebSocket -> Eff e Unit) -> Eff e Unit)
 
 webSocket :: forall e. WURL -> WebSocketHandler e -> Aff e WebSocket
 webSocket url handlers = makeAff $ runFn2 webSocketNative url handlers
