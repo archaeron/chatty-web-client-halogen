@@ -13,10 +13,10 @@ data WSResponse
 	| Close
 	| Message String
 
-foreign import data WEBSOCKET :: !
+foreign import data WS :: !
 foreign import data WebSocket :: *
 
-type WebSocketHandler eff = String -> Eff (eff) Unit
+type WebSocketHandler eff = WSResponse -> Eff (ws :: WS | eff) Unit
 
 instance showWSResponse :: Show WSResponse where
 	show Open = "Open"
@@ -24,49 +24,43 @@ instance showWSResponse :: Show WSResponse where
 	show (Message s) = "Message " ++ s
 
 foreign import webSocketNative """
-	function webSocketNative(url)
+	function webSocketNative(url, handler)
 	{
-		return function(handler)
+		return function(err)
 		{
-			return function(err)
+			return function(callback)
 			{
-				return function(callback)
+				return function()
 				{
-					return function()
+					try
 					{
-						try
+						var ws = new WebSocket(url);
+						ws.onopen = function()
 						{
-							var ws = new WebSocket(url);
-							ws.onopen = function()
+							handler(new Open)();
+							ws.onmessage = function(messageEvent)
 							{
-								handler("opened the WS")();
-								ws.onmessage = function(messageEvent)
-								{
-									handler(messageEvent.data)();
-								};
-								callback(ws)();
+								handler(new Message(messageEvent.data))();
 							};
+							callback(ws)();
+						};
 
-						}
-						catch (e)
-						{
-							err(e)();
-						}
-					};
+					}
+					catch (e)
+					{
+						err(e)();
+					}
 				};
 			};
 		};
 	}
-	""" :: forall e. WURL ->
-				WebSocketHandler e ->
-				(Error -> Eff e Unit) ->
-				(WebSocket -> Eff e Unit) ->
-				Eff e Unit
-
---mkWebsocket :: WebSocketConfig ->
+	""" :: forall e. Fn2
+						WURL
+						(WebSocketHandler e)
+						((Error -> Eff e Unit) -> (WebSocket -> Eff e Unit) -> Eff e Unit)
 
 webSocket :: forall e. WURL -> WebSocketHandler e -> Aff e WebSocket
-webSocket url handlers = makeAff $ webSocketNative url handlers
+webSocket url handlers = makeAff $ runFn2 webSocketNative url handlers
 
 foreign import push """
 	function push(ws)

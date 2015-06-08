@@ -185,8 +185,8 @@ init = do
 	channels <- Requests.Requests.getChannels
 	return testState { channels = channels }
 
-onMessageHandler :: forall eff. String -> Eff (trace :: DB.Trace | eff) Unit
-onMessageHandler s = DB.trace $ "Message: " ++ s
+onMessageHandler :: forall eff. WSResponse -> Eff (trace :: DB.Trace | eff) Unit
+onMessageHandler s = DB.trace $ "Message: " ++ (show s)
 
 main =
 	launchAff do
