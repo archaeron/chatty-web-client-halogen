@@ -1,5 +1,7 @@
 module Requests.Requests where
 
+import Prelude (($), bind, (++), return)
+
 import Halogen (HalogenEffects())
 import qualified Halogen.HTML.Events.Handler as E
 import qualified Halogen.HTML.Events.Monad as E
@@ -27,7 +29,7 @@ apiUrl = "http://halogen.ctor.ch/v1/"
 requestURL :: URL -> URL
 requestURL url = apiUrl ++ url
 
-postWithHeaders :: forall e a b. (Requestable a, Respondable b) => [RequestHeader] -> URL -> a -> Affjax e b
+postWithHeaders :: forall e a b. (Requestable a, Respondable b) => Array RequestHeader -> URL -> a -> Affjax e b
 postWithHeaders headers url content =
 	affjax $ defaultRequest
 		{ method = POST
@@ -36,7 +38,7 @@ postWithHeaders headers url content =
 		, headers = headers
 		}
 
-getWithHeaders :: forall e a b. (Respondable b) => [RequestHeader] -> URL -> Affjax e b
+getWithHeaders :: forall e a b. (Respondable b) => Array RequestHeader -> URL -> Affjax e b
 getWithHeaders headers url =
 	affjax $ defaultRequest
 		{ method = GET
@@ -44,7 +46,7 @@ getWithHeaders headers url =
 		, headers = headers
 		}
 
-headers :: [RequestHeader]
+headers :: Array RequestHeader
 headers =
 	[ RequestHeader "Authorization" "bla"
 	, Accept Network.HTTP.MimeType.Common.applicationJSON
@@ -77,7 +79,7 @@ postMessage channel text = E.yield DoNothing `E.andThen` \_ -> E.async compileAf
 getChannelsRequest :: forall e a. (Respondable a) => Affjax e a
 getChannelsRequest = getWithHeaders headers $ requestURL "channels"
 
-getChannels :: forall eff. Aff (ajax :: AJAX | eff) [Channel]
+getChannels :: forall eff. Aff (ajax :: AJAX | eff) (Array Channel)
 getChannels = do
 	result <- getChannelsRequest
 	let response = decode result.response

@@ -1,5 +1,6 @@
 module Requests.WebSockets where
 
+import Prelude
 import Data.Function
 
 import Control.Monad.Eff
@@ -25,62 +26,13 @@ instance showWSResponse :: Show WSResponse where
 	show (Error e) = "Error " ++ e
 	show (Message s) = "Message " ++ s
 
-foreign import webSocketNative """
-	function webSocketNative(url, handler)
-	{
-		return function(err)
-		{
-			return function(callback)
-			{
-				return function()
-				{
-					try
-					{
-						var ws = new WebSocket(url);
-						ws.onopen = function()
-						{
-							handler(new Open)();
-							ws.onmessage = function(messageEvent)
-							{
-								handler(new Message(messageEvent.data))();
-							};
-							ws.onerror = function(e)
-							{
-								handler(new Error(e))();
-							}
-							ws.onclose = function()
-							{
-								handler(new Close)();
-							}
-							callback(ws)();
-						};
-					}
-					catch (e)
-					{
-						err(e)();
-					}
-				};
-			};
-		};
-	}
-	""" :: forall e. Fn2
-						WURL
-						(WebSocketHandler e)
-						((E.Error -> Eff e Unit) -> (WebSocket -> Eff e Unit) -> Eff e Unit)
+foreign import webSocketNative
+	:: forall e. Fn2
+			WURL
+			(WebSocketHandler e)
+			((E.Error -> Eff e Unit) -> (WebSocket -> Eff e Unit) -> Eff e Unit)
 
 webSocket :: forall e. WURL -> WebSocketHandler e -> Aff e WebSocket
 webSocket url handlers = makeAff $ runFn2 webSocketNative url handlers
 
-foreign import push """
-	function push(ws)
-	{
-		return function(msg)
-		{
-			return function()
-			{
-				ws.send(msg);
-				return {};
-			};
-		};
-	}
-	""" :: forall e. WebSocket -> String -> Eff e Unit
+foreign import push :: forall e. WebSocket -> String -> Eff e Unit

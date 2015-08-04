@@ -2,6 +2,8 @@ module Views.Message
 	( messagesView
 	) where
 
+import Prelude (($), (<$>))
+
 import Data.Array
 import Data.Maybe
 
@@ -53,7 +55,7 @@ messageView { from: from, to: to, message: message } =
 			]
 		]
 
-messagesView :: forall m. (Alternative m) => [Message] -> Maybe Channel -> H.HTML (m _)
+messagesView :: forall m. (Alternative m) => Array Message -> Maybe Channel -> H.HTML (m _)
 messagesView messages Nothing = H.div_ [ H.text "no channel selected" ]
 messagesView messages (Just selectedChannel) =
 	H.div

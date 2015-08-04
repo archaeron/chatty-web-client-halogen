@@ -2,13 +2,14 @@ module Requests.Types where
 
 import Data.JSON
 import Models.Channel
+import Prelude
 
 data MessageRequest = MessageRequest
 	{ content :: String
 	, title :: String
 	, lead :: String
 	, contentType :: String
-	, to :: Number
+	, to :: Int
 	, language :: String
 	}
 
@@ -28,11 +29,11 @@ data MessageResponse = MessageResponse
 	{ content :: String
 	, contentType :: String
 	, created :: String
-	, from :: Number
+	, from :: Int
 	, language :: String
 	, lead :: String
 	, title :: String
-	, to :: Number
+	, to :: Int
 	}
 
 instance messageResponseFromJSON :: FromJSON MessageResponse where

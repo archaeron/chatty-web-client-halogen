@@ -1,14 +1,16 @@
 module Main where
 
+import Prelude (($), (++), bind, Unit(..), (<$>), return, (>>=), flip, show)
+
 import Data.Void
 import Data.Tuple
 import Data.Maybe
 import Data.Either
-import Data.Array (zipWith, length, modifyAt, deleteAt, (..), (!!), map)
+import Data.Functor (($>))
+import Data.Array (zipWith, length, modifyAt, deleteAt, (..), (!!))
 
 import qualified Data.String as S
 
-import Control.Functor (($>))
 import Control.Alternative
 import Control.Bind
 import Control.Monad.Eff
@@ -39,6 +41,7 @@ import qualified Halogen.Themes.Bootstrap3.InputGroup as BI
 
 import Control.Monad.Aff
 import Control.Monad.Eff.Class
+import Control.Monad.Aff.Unsafe (unsafeTrace)
 import Network.HTTP.Affjax
 
 import Models.Action
@@ -51,8 +54,7 @@ import Views.Channel
 import Views.Input
 import Views.Message
 
-import qualified Debug.Trace as DB
-import Control.Monad.Aff.Debug.Trace (trace)
+import Debug.Trace
 import Requests.WebSockets
 
 appendToBody :: forall eff. HTMLElement -> Eff (dom :: DOM | eff) Unit
@@ -70,7 +72,7 @@ user2 =
 	, email: "ben@kenobi.ch"
 	}
 
-messages :: [Message]
+messages :: Array Message
 messages =
 	[
 		{ from: user1
@@ -185,15 +187,14 @@ init = do
 	channels <- Requests.Requests.getChannels
 	return testState { channels = channels }
 
-onMessageHandler :: forall eff. WSResponse -> Eff (trace :: DB.Trace | eff) Unit
-onMessageHandler s = DB.trace $ "Message: " ++ (show s)
+onMessageHandler :: forall eff. WSResponse -> Eff (eff) Unit
+onMessageHandler s = launchAff $ unsafeTrace $ "Message: " ++ (show s)
 
 main =
 	launchAff do
 		ws <- webSocket "ws://echo.websocket.org" onMessageHandler
 		liftEff' $ push ws "hello"
 		liftEff' $ push ws "WebSocket test"
-		trace "test"
 -- launchAff do
 
 	--state <- init

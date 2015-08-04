@@ -2,6 +2,7 @@ module Views.Channel
 	( channelsView
 	) where
 
+import Prelude ((==), ($), (<$>))
 --import Data.Array
 import Data.Maybe
 
@@ -55,7 +56,7 @@ channelView selectedChannel channel =
 			[ H.text (unChannel channel).name ]
 		]
 
-channelsView :: forall m. (Alternative m) => [Channel] -> Maybe Channel -> H.HTML (m _)
+channelsView :: forall m. (Alternative m) => Array Channel -> Maybe Channel -> H.HTML (m _)
 channelsView channels selectedChannel =
 	H.div [ A.class_ $ A.className "channels" ]
 		[ H.h2_ [ H.text "Channels" ]

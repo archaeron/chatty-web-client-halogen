@@ -2,6 +2,8 @@ module Views.Input
 	( inputView
 	) where
 
+import Prelude (($), pure)
+
 import Control.Alternative
 import Data.Maybe
 

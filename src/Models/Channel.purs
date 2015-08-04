@@ -1,12 +1,13 @@
 module Models.Channel where
 
+import Prelude (Eq, eq)
+
 data Channel = Channel
-	{ id :: Number
+	{ id :: Int
 	, name :: String
 	}
 
 unChannel (Channel c) = c
 
 instance eqChannel :: Eq Channel where
-	(==) (Channel a) (Channel b) = a.id == b.id
-	(/=) (Channel a) (Channel b) = a.id /= b.id
+	eq (Channel a) (Channel b) = a.id `eq` b.id

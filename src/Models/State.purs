@@ -8,10 +8,10 @@ import Models.Message
 import Models.User
 
 type State =
-	{ messages :: [ Message ]
+	{ messages :: Array Message
 	, editText :: String
 	, user :: User
-	, channels :: [ Channel ]
+	, channels :: Array Channel
 	, selectedChannel :: Maybe Channel
 	--, selectedInputType :: InputType
 	}
