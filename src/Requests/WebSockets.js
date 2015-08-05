@@ -1,6 +1,6 @@
 // module Requests.WebSockets
 
-exports.webSocketNative = function(url, handler)
+exports.webSocketNative = function(open, close, error, message, url, handler)
 {
 	return function(err)
 	{
@@ -13,18 +13,18 @@ exports.webSocketNative = function(url, handler)
 					var ws = new WebSocket(url);
 					ws.onopen = function()
 					{
-						handler(new Open)();
+						handler(open)();
 						ws.onmessage = function(messageEvent)
 						{
-							handler(new Message(messageEvent.data))();
+							handler(message(messageEvent.data))();
 						};
 						ws.onerror = function(e)
 						{
-							handler(new Error(e))();
+							handler(error(e))();
 						}
 						ws.onclose = function()
 						{
-							handler(new Close)();
+							handler(close)();
 						}
 						callback(ws)();
 					};

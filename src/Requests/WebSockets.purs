@@ -27,12 +27,17 @@ instance showWSResponse :: Show WSResponse where
 	show (Message s) = "Message " ++ s
 
 foreign import webSocketNative
-	:: forall e. Fn2
+	:: forall e. Fn6
+			WSResponse
+			WSResponse
+			(String -> WSResponse)
+			(String -> WSResponse)
 			WURL
 			(WebSocketHandler e)
 			((E.Error -> Eff e Unit) -> (WebSocket -> Eff e Unit) -> Eff e Unit)
 
 webSocket :: forall e. WURL -> WebSocketHandler e -> Aff e WebSocket
-webSocket url handlers = makeAff $ runFn2 webSocketNative url handlers
+webSocket url handlers =
+	makeAff $ runFn6 webSocketNative Open Close Error Message url handlers
 
 foreign import push :: forall e. WebSocket -> String -> Eff e Unit
